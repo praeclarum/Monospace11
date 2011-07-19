@@ -16,13 +16,28 @@ namespace Monospace11
 	
 	public class UITableViewController : UIViewController
 	{
-		public UITableView TableView = new UITableView ();		
+		public UITableView TableView;
+		
+		public UITableViewController ()
+		{
+			TableView = new UITableView (() => Data);
+		}
 	}
 	
 	public class UITableView
 	{
+		Func<object> GetDataSource;
+		
+		public UITableView (Func<object> getDataSource)
+		{
+			GetDataSource = getDataSource;
+		}
+		
 		public void ReloadData ()
 		{
+			Console.WriteLine ("==============================");
+			Console.WriteLine ("TABLE DATA " + DateTime.Now);
+			Console.WriteLine (GetDataSource ());			
 		}
 	}
 }

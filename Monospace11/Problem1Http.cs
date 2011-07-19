@@ -4,7 +4,7 @@ namespace Monospace11
 {
 	public class HttpViewController : UITableViewController
 	{
-		void Initialize ()
+		public void Initialize ()
 		{
 			new Http ().Get (
 				"http://api.stackoverflow.com/1.0/questions?tagged=monotouch",

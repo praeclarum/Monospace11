@@ -10,7 +10,7 @@ namespace Monospace11
 		
 		public static object ParseQuestions (string content, string contentType)
 		{
-			return null;
+			return content;
 		}
 	}
 }
