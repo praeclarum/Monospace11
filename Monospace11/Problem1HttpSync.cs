@@ -7,10 +7,10 @@ namespace Monospace11
 		public void Initialize ()
 		{
 			try {				
-				var content = new Http ().Get (
+				var resp = new Http ().Get (
 					"http://api.stackoverflow.com/1.0/questions?tagged=monotouch");
 			
-				Data = Model.ParseQuestions (content, "");				
+				Data = Model.ParseQuestions (resp.Content, resp.ContentType);
 				TableView.ReloadData ();
 			}
 			catch (Exception error)

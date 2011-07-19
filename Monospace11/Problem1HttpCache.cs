@@ -2,11 +2,13 @@ using System;
 
 namespace Monospace11
 {
-	public class HttpViewController : UITableViewController
+	public class HttpCacheViewController : UITableViewController
 	{
+		public IHttpCache HttpCache { get; set; }
+		
 		public void Initialize ()
 		{
-			new Http ().Get (
+			new Http (HttpCache).Get (
 				"http://api.stackoverflow.com/1.0/questions?tagged=monotouch",
 				(resp, error) => {
 				

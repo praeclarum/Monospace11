@@ -7,12 +7,19 @@ namespace Monospace11
 {
 	public class Http
 	{
-		public Http ()
+		IHttpCache cache;
+		
+		public Http (IHttpCache cache = null)
 		{
+			this.cache = cache;
 		}
 		
-		public void Get (string url, Action<string, string, Exception> continuation)
-		{
+		public void Get (string url, Action<HttpResponse, Exception> continuation)
+		{			
+			if (cache != null && cache.ContainsFreshData (url)) {
+				continuation (cache.Get (url), null);
+			}
+			
 			var req = WebRequest.Create (url);
 			var hreq = req as HttpWebRequest;
 			if (hreq != null) {
@@ -25,21 +32,30 @@ namespace Monospace11
 					var contentType = resp.ContentType;
 					using (var s = resp.GetResponseStream ()) {
 						using (var r = new StreamReader (s, Encoding.UTF8)) {
-							var content = r.ReadToEnd ();
+
+							var hr = new HttpResponse {
+								Content = r.ReadToEnd (),
+								ContentType = contentType,
+							};
+								
+							if (cache != null) {
+								cache.Add (url, hr);
+							}
+							
 							try {
-								continuation (content, contentType, null);
+								continuation (hr, null);
 							}
 							catch (Exception) {}
 						}
 					}
 				}
 				catch (Exception respErr) {
-					continuation (null, null, respErr);
+					continuation (null, respErr);
 				}				
 			}, null);
 		}
 		
-		public string Get (string url)
+		public HttpResponse Get (string url)
 		{
 			var req = WebRequest.Create (url);
 			var hreq = req as HttpWebRequest;
@@ -47,12 +63,37 @@ namespace Monospace11
 				hreq.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
 			}
 			var resp = req.GetResponse ();
+			var contentType = resp.ContentType;
 			using (var s = resp.GetResponseStream ()) {
 				using (var r = new StreamReader (s, Encoding.UTF8)) {
-					return r.ReadToEnd ();
+
+					var hr = new HttpResponse {
+						Content = r.ReadToEnd (),
+						ContentType = contentType,
+					};
+					
+					if (cache != null) {
+						cache.Add (url, hr);
+					}
+					
+					return hr;
 				}
 			}
 		}
+	}
+	
+	public interface IHttpCache
+	{
+		bool ContainsFreshData (string url);
+		HttpResponse Get (string url);
+		void Add (string url, HttpResponse resp);
+	}
+	
+	public class HttpResponse
+	{
+		public string Content;
+		public string ContentType;
+		public DateTime ExpirationDate;
 	}
 }
 
