@@ -1,0 +1,6 @@
+*.user
+*.orig
+*.userprefs
+*.pidb
+.DS_Store
+
