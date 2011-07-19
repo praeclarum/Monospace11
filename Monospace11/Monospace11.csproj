@@ -34,6 +34,7 @@
     <Compile Include="Http.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="UIKit.cs" />
+    <Compile Include="Problem1HttpSync.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

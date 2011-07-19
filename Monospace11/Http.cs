@@ -38,6 +38,21 @@ namespace Monospace11
 				}				
 			}, null);
 		}
+		
+		public string Get (string url)
+		{
+			var req = WebRequest.Create (url);
+			var hreq = req as HttpWebRequest;
+			if (hreq != null) {
+				hreq.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+			}
+			var resp = req.GetResponse ();
+			using (var s = resp.GetResponseStream ()) {
+				using (var r = new StreamReader (s, Encoding.UTF8)) {
+					return r.ReadToEnd ();
+				}
+			}
+		}
 	}
 }
 
